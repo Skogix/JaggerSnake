@@ -5,34 +5,34 @@ using UnityEngine;
 
 public class GameControl : MonoBehaviour
 {
+  //startar en instans för singleton
   public static GameControl instance;
   public bool gameOver = false;
 
 
     void Awake()
     {
+      //om instansen inte finns, this är instans - annars destroy
       if (instance == null)
       {
         instance = this;
       } else if (instance != this)
       {
-      Destroy(gameObject);
+        Destroy(gameObject);
       } 
     }
-  // Start is called before the first frame update
-  void Start()
-    {
+    void Start()
+      {
         
-    }
+      }
 
-    // Update is called once per frame
     void Update()
     {
         
     }
     public void SnakeDied()
-  {
-    Debug.Log("SnakeDied called!");
-    gameOver = true;
-  }
+    {
+      Debug.Log("SnakeDied called!");
+      gameOver = true;
+    }
 }

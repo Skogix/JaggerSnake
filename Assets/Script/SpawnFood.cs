@@ -12,7 +12,7 @@ public class SpawnFood : MonoBehaviour
   public Transform borderRight;
   void Start()
   {
-    InvokeRepeating("Spawn", 3, 4);
+    InvokeRepeating("Spawn", 1, 4);
   }
   void Spawn()
   {

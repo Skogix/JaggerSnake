@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-  //behövs för listor
+//behövs för listor
 using System.Linq;
 
 /*
@@ -24,23 +24,21 @@ public class Snake : MonoBehaviour
   
   //har du ätit något den här updaten?
   private bool ate = false;
-
   //är du död?
   private bool isDead = false;
   //rb
   private Rigidbody2D rb;
-
-
   //tail prefab
   public GameObject tailPrefab;
-    void Start()
-    {
-      //gör en egen "update" var 0.1e sek
-      InvokeRepeating("Move", 0.1f, 0.1f);
 
-      // hämta från objektet
-      rb = GetComponent<Rigidbody2D>(); 
-    }
+  void Start()
+  {
+    //gör en egen "update" var 0.1e sek
+    InvokeRepeating("Move", 0.1f, 0.1f);
+
+    // hämta från objektet
+    rb = GetComponent<Rigidbody2D>(); 
+  }
 
   void Update()
   {
@@ -51,7 +49,7 @@ public class Snake : MonoBehaviour
     }
     else
     {
-      //sätt dir åt det håll vi trycker
+      //sätt dir åt det håll vi trycker && inte åt motsatt håll
       if (Input.GetKey(KeyCode.RightArrow) && dir != Vector2.left)
         dir = Vector2.right;
       else if (Input.GetKey(KeyCode.LeftArrow) && dir != Vector2.right)
@@ -103,18 +101,19 @@ public class Snake : MonoBehaviour
       ate = true;
       //förtör maten
       Destroy(coll.gameObject);
-
       Debug.Log("Du åt!");
-    } else if(coll.name.StartsWith("Border"))
+    } 
+    else if(coll.name.StartsWith("Border"))
     {
       Debug.Log("Du åkte in i väggen!");
       GameControl.instance.SnakeDied();
       isDead = true;
-    } else if (coll.name.StartsWith("TailPrefab"))
+    } 
+    else if (coll.name.StartsWith("Tail"))
     {
-      isDead = true;
       Debug.Log("Du åkte in i svansen!");
       GameControl.instance.SnakeDied();
+      isDead = true;
     }
   }
 }
