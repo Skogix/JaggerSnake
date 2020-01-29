@@ -7,6 +7,10 @@ using System.Linq;
 /*
  * Translate betyder i princip sett "lägg till den här
  * vectorn till min nuvarande position". 
+ * 
+ * Quaternion
+ * The identity rotation (Read Only).
+ * This quaternion corresponds to "no rotation" - the object is perfectly aligned with the world or parent axes.
  */
 
 
@@ -14,10 +18,19 @@ public class Snake : MonoBehaviour
 {
   //startdir = höger
   Vector2 dir = Vector2.right;
+
   //lista över alla tails från transform
   List<Transform> tail = new List<Transform>();
+  
   //har du ätit något den här updaten?
-  bool ate = false;
+  private bool ate = false;
+
+  //är du död?
+  private bool isDead = false;
+  //rb
+  private Rigidbody2D rb;
+
+
   //tail prefab
   public GameObject tailPrefab;
     void Start()
@@ -25,20 +38,30 @@ public class Snake : MonoBehaviour
       //gör en egen "update" var 0.1e sek
       InvokeRepeating("Move", 0.1f, 0.1f);
 
+      // hämta från objektet
+      rb = GetComponent<Rigidbody2D>(); 
     }
 
-    void Update()
+  void Update()
+  {
+    if (isDead)
     {
-    //sätt dir åt det håll vi trycker
-    if (Input.GetKey(KeyCode.RightArrow))
-      dir = Vector2.right;
-    else if (Input.GetKey(KeyCode.LeftArrow))
-      dir = -Vector2.right;
-    else if (Input.GetKey(KeyCode.UpArrow))
-      dir = Vector2.up;
-    else if (Input.GetKey(KeyCode.DownArrow))
-      dir = -Vector2.up;
+      Debug.Log("Du är död och ska inte röra dig!");
+      dir = Vector2.zero;
     }
+    else
+    {
+      //sätt dir åt det håll vi trycker
+      if (Input.GetKey(KeyCode.RightArrow) && dir != Vector2.left)
+        dir = Vector2.right;
+      else if (Input.GetKey(KeyCode.LeftArrow) && dir != Vector2.right)
+        dir = Vector2.left;
+      else if (Input.GetKey(KeyCode.UpArrow) && dir != Vector2.down)
+        dir = Vector2.up;
+      else if (Input.GetKey(KeyCode.DownArrow) && dir != Vector2.up)
+        dir = Vector2.down;
+    }
+  }
     void Move()
     {
       //sparar nuvarande position som vi ska fylla i
@@ -80,9 +103,18 @@ public class Snake : MonoBehaviour
       ate = true;
       //förtör maten
       Destroy(coll.gameObject);
-    } else
+
+      Debug.Log("Du åt!");
+    } else if(coll.name.StartsWith("Border"))
     {
-      // TODO du förlorade
+      Debug.Log("Du åkte in i väggen!");
+      GameControl.instance.SnakeDied();
+      isDead = true;
+    } else if (coll.name.StartsWith("TailPrefab"))
+    {
+      isDead = true;
+      Debug.Log("Du åkte in i svansen!");
+      GameControl.instance.SnakeDied();
     }
   }
 }
